@@ -36,9 +36,9 @@ public class UserServiceImpl implements UserService{
         userEntity.setFirstName(user.getFirstName());
         userEntity.setLastName(user.getLastName());
         try {
-            userEntity.setDob(LocalDate.parse(user.getDob(), DateTimeFormatter.ofPattern("d-MMM-yyyy")));
+            userEntity.setDob(LocalDate.parse(user.getDob(), DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         }catch(Exception e){
-            throw new DateFormatException("Date of birth must be in dd-MMM-yyyy format");
+            throw new DateFormatException("Date of birth must be in dd-MM-yyyy format");
         }
         userEntity.setAddressList(user.getAddressList());
         return userRepository.save(userEntity);
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService{
         if(existingUser==null){
             throw new ResourceNotFoundException("No user found with given id");
         }
-        if (!existingUser.getDob().isEqual(LocalDate.parse(user.getDob(), DateTimeFormatter.ofPattern("d-MMM-yyyy")))) {
+        if (!existingUser.getDob().isEqual(LocalDate.parse(user.getDob(), DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
             throw new UpdateNotAllowedException("Date of birth update not allowed");
         }
         existingUser.setLastName(user.getLastName());
