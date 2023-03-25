@@ -31,8 +31,13 @@ public class UserControllerTest extends TestCase {
     @Test
     public void testCreateUser() throws DateFormatException {
         UserRequest userRequest = new UserRequest();
-        User savedUser = new User();
-        when(userService.save(userRequest)).thenReturn(savedUser);
+        userRequest.setFirstName("test");
+        userRequest.setLastName("user");
+        userRequest.setAge(20);
+        userRequest.setGender("M");
+        userRequest.setDob("12-Apr-2003");
+
+        when(userService.save(userRequest)).thenReturn(new User());
         ResponseEntity<User> response = userController.createUser(userRequest);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }

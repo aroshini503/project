@@ -41,8 +41,8 @@ public class UserServiceImplTest extends TestCase {
         user.setFirstName("test");
         user.setLastName("user");
         user.setAge(20);
-        user.setGender("male");
-        user.setDob("12-04-1990");
+        user.setGender("M");
+        user.setDob("12-Apr-2003");
         when(userRepository.save(any())).thenReturn(new User());
         User response = userService.save(user);
         assertNotNull(response);
@@ -54,14 +54,14 @@ public class UserServiceImplTest extends TestCase {
         user.setFirstName("test");
         user.setLastName("user");
         user.setAge(20);
-        user.setGender("male");
-        user.setDob("12-4-1990");
+        user.setGender("M");
+        user.setDob("12-04-2003");
         User response = null;
         try {
             response = userService.save(user);
         } catch (DateFormatException ex) {
             assertNotNull(ex);
-            assertEquals("Date of birth must be in dd-MM-yyyy format", ex.getMessage());
+            assertEquals("Date of birth must be in dd-MMM-yyyy format", ex.getMessage());
         }
     }
 
@@ -93,15 +93,15 @@ public class UserServiceImplTest extends TestCase {
         userRequest.setFirstName("test");
         userRequest.setLastName("user");
         userRequest.setAge(20);
-        userRequest.setGender("male");
-        userRequest.setDob("12-04-1990");
+        userRequest.setGender("M");
+        userRequest.setDob("12-Apr-2003");
 
         User user = new User();
         user.setFirstName("test");
         user.setLastName("user");
         user.setAge(20);
-        user.setGender("male");
-        user.setDob(LocalDate.parse("12-04-1990", DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        user.setGender("M");
+        user.setDob(LocalDate.parse("12-Apr-2003", DateTimeFormatter.ofPattern("d-MMM-yyyy")));
 
         when(userRepository.getById(any())).thenReturn(user);
         when(userRepository.save(any())).thenReturn(user);
@@ -117,8 +117,8 @@ public class UserServiceImplTest extends TestCase {
         userRequest.setFirstName("test");
         userRequest.setLastName("user");
         userRequest.setAge(20);
-        userRequest.setGender("male");
-        userRequest.setDob("12-04-1990");
+        userRequest.setGender("M");
+        userRequest.setDob("12-Apr-2003");
 
         when(userRepository.getById(any())).thenReturn(null);
 
@@ -139,15 +139,15 @@ public class UserServiceImplTest extends TestCase {
         userRequest.setFirstName("test");
         userRequest.setLastName("user");
         userRequest.setAge(20);
-        userRequest.setGender("male");
-        userRequest.setDob("13-04-1990");
+        userRequest.setGender("M");
+        userRequest.setDob("13-Apr-2003");
 
         User user = new User();
         user.setFirstName("test");
         user.setLastName("user");
         user.setAge(20);
-        user.setGender("male");
-        user.setDob(LocalDate.parse("12-04-1990", DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        user.setGender("M");
+        user.setDob(LocalDate.parse("12-Apr-2003", DateTimeFormatter.ofPattern("d-MMM-yyyy")));
 
         when(userRepository.getById(any())).thenReturn(user);
 
