@@ -28,10 +28,18 @@ public class Address {
     @NotBlank(message = "State is mandatory")
     private String state;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonIgnore
     private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;

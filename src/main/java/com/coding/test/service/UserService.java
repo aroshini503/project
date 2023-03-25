@@ -8,7 +8,6 @@ import com.coding.test.model.User;
 
 public interface UserService {
     User save(UserRequest user) throws DateFormatException;
-    User getUserById(Long id) throws ResourceNotFoundException;
+    User getUserById(Long id, boolean isAddressNeeded) throws ResourceNotFoundException;
     User updateUser(Long id, UserRequest user) throws ResourceNotFoundException, UpdateNotAllowedException;
-    User getUserWithAddressById(Long id);
 }

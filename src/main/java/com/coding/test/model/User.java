@@ -1,5 +1,7 @@
 package com.coding.test.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -9,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 
     @Id
@@ -26,8 +29,9 @@ public class User {
     @Column(name = "date_of_birth")
     private LocalDate dob;
 
-    @OneToMany(mappedBy="user", cascade = CascadeType.ALL, fetch =FetchType.LAZY)
-    private List<Address> addressList = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch =FetchType.LAZY, mappedBy = "user")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Address> addressList;
 
     public LocalDate getDob() {
         return dob;

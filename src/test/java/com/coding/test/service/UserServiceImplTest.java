@@ -6,7 +6,6 @@ import com.coding.test.exception.ResourceNotFoundException;
 import com.coding.test.exception.UpdateNotAllowedException;
 import com.coding.test.model.Address;
 import com.coding.test.model.User;
-import com.coding.test.repository.AddressRepository;
 import com.coding.test.repository.UserRepository;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +32,6 @@ public class UserServiceImplTest extends TestCase {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private AddressRepository addressRepository;
-
     @Test
     public void testSave() throws DateFormatException {
         UserRequest user = new UserRequest();
@@ -43,6 +40,8 @@ public class UserServiceImplTest extends TestCase {
         user.setAge(20);
         user.setGender("M");
         user.setDob("12-Apr-2003");
+        Address address = new Address();
+        user.setAddressList(Arrays.asList(address));
         when(userRepository.save(any())).thenReturn(new User());
         User response = userService.save(user);
         assertNotNull(response);
@@ -70,7 +69,7 @@ public class UserServiceImplTest extends TestCase {
         User user = new User();
         user.setFirstName("test");
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        User response = userService.getUserById(1L);
+        User response = userService.getUserById(1L,false);
         assertNotNull(response);
         assertEquals("test", response.getFirstName());
     }
@@ -80,7 +79,7 @@ public class UserServiceImplTest extends TestCase {
         when(userRepository.findById(any())).thenReturn(Optional.empty());
         User response = null;
         try {
-            response = userService.getUserById(1L);
+            response = userService.getUserById(1L, false);
         } catch (ResourceNotFoundException ex) {
             assertNotNull(ex);
             assertEquals("No user found with given id", ex.getMessage());
@@ -163,17 +162,17 @@ public class UserServiceImplTest extends TestCase {
     }
 
     @Test
-    public void testGetUserWithAddressById() {
+    public void testGetUserWithAddressById() throws ResourceNotFoundException {
         User user = new User();
         user.setFirstName("test");
 
         List<Address> addresses = new ArrayList<>();
         Address address = new Address();
         addresses.add(address);
+        user.setAddressList(addresses);
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(addressRepository.findByUserId(any())).thenReturn(addresses);
-        User response = userService.getUserWithAddressById(1L);
+        User response = userService.getUserById(1L,true);
         assertNotNull(response);
         assertEquals("test", response.getFirstName());
         assertEquals(1, response.getAddressList().size());

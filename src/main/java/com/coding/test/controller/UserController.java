@@ -37,17 +37,11 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) throws ResourceNotFoundException {
-        User user = userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id, @RequestParam(defaultValue = "false")boolean isAddressNeeded) throws ResourceNotFoundException {
+        User user = null;
+        user = userService.getUserById(id,isAddressNeeded);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
-    @GetMapping("/{id}/getAddress")
-    public ResponseEntity<User> getUserWithAddressById(@PathVariable Long id) throws ResourceNotFoundException {
-        User user = userService.getUserWithAddressById(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
 
     // exception handler for validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)

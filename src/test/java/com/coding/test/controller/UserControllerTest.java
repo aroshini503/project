@@ -4,6 +4,7 @@ import com.coding.test.dto.UserRequest;
 import com.coding.test.exception.DateFormatException;
 import com.coding.test.exception.ResourceNotFoundException;
 import com.coding.test.exception.UpdateNotAllowedException;
+import com.coding.test.model.Address;
 import com.coding.test.model.User;
 import com.coding.test.service.UserService;
 import junit.framework.TestCase;
@@ -15,7 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Arrays;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -96,8 +100,19 @@ public class UserControllerTest extends TestCase {
 
     @Test
     public void testGetUserById() throws ResourceNotFoundException {
-        when(userService.getUserById(any())).thenReturn(new User());
-        ResponseEntity<User> response = userController.getUserById(1L);
+        when(userService.getUserById(any(),eq(false))).thenReturn(new User());
+        ResponseEntity<User> response = userController.getUserById(1L,false);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testGetUserByIdWithAddress() throws ResourceNotFoundException {
+        Address address = new Address();
+        User user = new User();
+        user.setAddressList(Arrays.asList(address));
+        when(userService.getUserById(any(),eq(true))).thenReturn(user);
+        ResponseEntity<User> response = userController.getUserById(1L,true);
+        assertEquals(1,response.getBody().getAddressList().size());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -105,19 +120,13 @@ public class UserControllerTest extends TestCase {
     public void testGetUserByIdWhenResourceNotFoundException(){
         ResponseEntity<User> response = null;
         try {
-            doThrow(new ResourceNotFoundException("user not found")).when(userService).getUserById(1L);
-            response = userController.getUserById(1L);
+            doThrow(new ResourceNotFoundException("user not found")).when(userService).getUserById(1L,true);
+            response = userController.getUserById(1L,true);
         } catch (ResourceNotFoundException ex) {
             assertNotNull(ex);
             assertEquals("user not found", ex.getMessage());
         }
     }
 
-    @Test
-    public void testGetUserWithAddressById() throws ResourceNotFoundException {
-        when(userService.getUserWithAddressById(any())).thenReturn(new User());
-        ResponseEntity<User> response = userController.getUserWithAddressById(1L);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
 
 }

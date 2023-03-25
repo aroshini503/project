@@ -4,9 +4,7 @@ import com.coding.test.dto.UserRequest;
 import com.coding.test.exception.DateFormatException;
 import com.coding.test.exception.ResourceNotFoundException;
 import com.coding.test.exception.UpdateNotAllowedException;
-import com.coding.test.model.Address;
 import com.coding.test.model.User;
-import com.coding.test.repository.AddressRepository;
 import com.coding.test.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -23,8 +20,6 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private AddressRepository addressRepository;
     @Override
     public User save(UserRequest user) throws DateFormatException {
         User userEntity = new User();
@@ -37,15 +32,23 @@ public class UserServiceImpl implements UserService{
         }catch(Exception e){
             throw new DateFormatException("Date of birth must be in dd-MMM-yyyy format");
         }
+        user.getAddressList().forEach(address -> address.setUser(userEntity));
         userEntity.setAddressList(user.getAddressList());
         return userRepository.save(userEntity);
     }
 
     @Override
-    public User getUserById(Long id) throws ResourceNotFoundException {
+    @Transactional
+    public User getUserById(Long id, boolean isAddressNeeded) throws ResourceNotFoundException {
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()){
-            return user.get();
+            if(isAddressNeeded) {
+                return user.get();
+            }else{
+                User userWithoutAddress= user.get();
+                userWithoutAddress.setAddressList(null);
+                return userWithoutAddress;
+            }
         }else{
             throw new ResourceNotFoundException("No user found with given id");
         }
@@ -67,12 +70,4 @@ public class UserServiceImpl implements UserService{
         return userRepository.save(existingUser);
     }
 
-    @Override
-    @Transactional
-    public User getUserWithAddressById(Long id) {
-       User user = userRepository.findById(id).get();
-       List<Address> result = addressRepository.findByUserId(id);
-       user.setAddressList(result);
-       return user;
-    }
 }
